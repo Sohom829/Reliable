@@ -51,7 +51,7 @@ for (const folder of functionFolders) {
 }
 client.on("ready", () => {
   const activities = [
-    { name: `/help`, type: 2 },
+    { name: `/bot help`, type: 2 },
     { name: `with ${client.guilds.cache.size} Servers`, type: 0 },
     {
       name: `${client.guilds.cache.reduce(
@@ -84,12 +84,19 @@ client.giveawaysManager = new GiveawaysManager(client, {
   default: {
     botsCanWin: false,
     embedColor: "#0398fc",
-    reaction: "🎉",
+    reaction: "<:reliable_giveaway:1038804433116614718>",
     lastChance: {
       enabled: true,
-      content: "⚠️ **LAST CHANCE TO ENTER !** ⚠️",
+      content: "<a:reliable_alert:1039201857819648000> **LAST CHANCE TO ENTER !** <a:reliable_alert:1039201857819648000>",
       threshold: 10000,
       embedColor: "#0398fc",
+      pauseOptions: {
+        isPaused: true,
+        content: '<a:reliable_alert:1039201857819648000>  **THIS GIVEAWAY IS PAUSED !** <a:reliable_alert:1039201857819648000> ',
+        unpauseAfter: null,
+        embedColor: '#0398fc',
+        infiniteDurationText: '`**NEVER**`'
+    }
     },
   },
 });
@@ -122,3 +129,4 @@ client.login(process.env.Token);
  * Bot Coded by IamSohom829#0829 & Alpha•#9258
  * You can't use this codes without permissions!
  */
+
