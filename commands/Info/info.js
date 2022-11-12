@@ -4,6 +4,10 @@ const {
   ButtonBuilder,
   ButtonStyle,
   EmbedBuilder,
+  ChannelType,
+  GuildVerificationLevel,
+  GuildExplicitContentFilter,
+  GuildNSFWLevel,
   Embed,
   Colors,
   ActionRowBuilder,
@@ -129,7 +133,7 @@ module.exports = {
     )
     .addSubcommand((sub) =>
       sub
-        .setName("user-perms")
+        .setName("user-perm")
         .setDescription("Shows a user's permissions")
         .addUserOption((op) =>
           op
@@ -137,6 +141,9 @@ module.exports = {
             .setDescription("Select the target")
             .setRequired(true)
         )
+    )
+    .addSubcommand((sub) =>
+      sub.setName("iss-location").setDescription("Shows ISS location")
     ),
 
   async execute(interaction, client) {
@@ -360,6 +367,11 @@ module.exports = {
     } else if (interaction.options.getSubcommand() === "channel") {
       let channel = interaction.options.getChannel("channel") || "";
 
+      const webhooks = await channel.fetchWebhooks();
+      const webhookArray = webhooks.size;
+      const vcmember = channel.members;
+      const memberArray = vcmember.size;
+
       const embed = new EmbedBuilder()
         .setTitle(`Channel Information`)
         .setThumbnail(
@@ -372,34 +384,26 @@ module.exports = {
         .setFooter({ text: "©2022 | Reliable" })
         .addFields(
           {
-            name: "<:reliable_support:1031443305399074836> Channel Name",
-            value: `> **\`${channel.name}\`**`,
+            name: "ChannelInfo:",
+            value: `**\`•\` Name**: ${channel}
+**\`•\` Description**: ${channel.topic || "None"}
+**\`•\` ID**: ${channel.id}
+**\`•\` Category**: ${channel.parentId ? `${channel.parent.name}` : "None"}
+**\`•\` Type**: ${channel.type}
+**\`•\` Position**: ${channel.position}
+**\`•\` NSFW**: ${channel.nsfw ? "Yes" : "No"} 
+**\`•\` Total Webhooks**: ${webhookArray || "None"}
+**\`•\` Created**: <t:${parseInt(channel.createdTimestamp / 1000)}:R>`,
             inline: false,
           },
           {
-            name: ":underage: NSFW",
-            value: `> **\`${channel.nsfw}\`**`,
-            inline: true,
-          },
-          {
-            name: ":id: Channel ID",
-            value: `> **\`${channel.id}\`**`,
-            inline: false,
-          },
-          {
-            name: ":file_folder: Channel Type",
-            value: `> **\`${channel.type}\`**`,
-            inline: true,
-          },
-          {
-            name: ":clipboard: Channel Description",
-            value: `> **\`${channel.topic}\`**`,
-            inline: true,
-          },
-          {
-            name: ":calendar: Channel Created At",
-            value: `> **\`${channel.createdAt}\`**`,
-            inline: false,
+            name: "VC",
+            value: `
+**\`•\` Members**: ${memberArray || "None"}
+**\`•\` Max Members**: ${channel.userLimit || "None"}
+**\`•\` Bitrate**: ${channel.bitrate || "None"}
+          ㅤ
+          `,
           }
         )
         .setColor("#0398fc");
@@ -437,11 +441,6 @@ The virus can spread from an infected person’s mouth or nose in small liquid p
               {
                 name: "Total Confirmed Cases",
                 value: `> **\`${confirmed}\`**`,
-                inline: true,
-              },
-              {
-                name: "Total Recovered",
-                value: `> **\`${recovered}\`**`,
                 inline: true,
               },
               {
@@ -493,11 +492,6 @@ The virus can spread from an infected person’s mouth or nose in small liquid p
               {
                 name: "Total Confirmed Cases",
                 value: `> **\`${confirmed}\`**`,
-                inline: true,
-              },
-              {
-                name: "Total Recovered",
-                value: `> **\`${recovered}\`**`,
                 inline: true,
               },
               {
@@ -741,34 +735,15 @@ The virus can spread from an infected person’s mouth or nose in small liquid p
       const embed = new EmbedBuilder()
         .setColor("#0398fc")
         .setFooter({ text: "©2022 | Reliable" })
-        .addFields(
-          { name: "‣ Role Name", value: `> <@&${role.id}>`, inline: true },
-          { name: "‣ Role ID", value: `> **\`${role.id}\`**`, inline: true },
-          {
-            name: "‣ Users in Role",
-            value: `> **\`${role.members.size}\` Users**`,
-            inline: true,
-          }
-        )
-        .addFields(
-          {
-            name: "‣ Mentionable",
-            value: `> **\`${mentionable}\`**`,
-            inline: true,
-          },
-          {
-            name: "‣ Displayed Seperately?",
-            value: `> **\`${displayed}\`**`,
-            inline: true,
-          },
-          {
-            name: "‣ Role Creation Date",
-            value: `> **\`${createdtime}\`**`,
-            inline: true,
-          },
-          { name: "‣ Color", value: `> **\`${role.hexColor}\`**`, inline: true }
-        );
-
+        .addFields({
+          name: "Role Information:",
+          value: `**\`•\` Role Name**: <@&${role.id}>
+**\`•\` User in Role**: **\`${role.members.size}\` Users**    
+**\`•\` Displayed Seperately**: **\`${displayed}\`**  
+**\`•\` Role Creation Date**: ${createdtime}  
+**\`•\` Mentionable**: **\`${mentionable}\`**
+**\`•\` Role Color**: **\`${role.hexColor}\`**`,
+        });
       await interaction.reply({ embeds: [embed] });
     } else if (interaction.options.getSubcommand() === "role-perm") {
       const role = interaction.options.getRole("target");
@@ -778,12 +753,12 @@ The virus can spread from an infected person’s mouth or nose in small liquid p
         .setTitle(`Role Permissions`)
         .addFields(
           {
-            name: "‣ Role Name",
+            name: "**`•`** Role Name",
             value: `> <@&${role.id}> (${role.id})`,
             inline: true,
           },
           {
-            name: "‣ Role Permissions",
+            name: "**`•`** Role Permissions",
             value: `\`\`\`${rolePermissions || "None"}\`\`\``,
             inline: false,
           }
@@ -857,10 +832,6 @@ The virus can spread from an infected person’s mouth or nose in small liquid p
             .setImage(guild.bannerURL({ size: 1024 }))
             .addFields(
               {
-                name: "**`📝`** | Description",
-                value: `> ${guild.description || "**`**`None`**`**"}`,
-              },
-              {
                 name: "**`🌐`** | General",
                 value: [
                   `‣ **Created On** <t:${parseInt(
@@ -873,6 +844,10 @@ The virus can spread from an infected person’s mouth or nose in small liquid p
                   }).of(guild.preferredLocale)}\`**`,
                   `‣ **Vanity URL** ${guild.vanityURLCode || "**`None`**"}`,
                 ].join("\n"),
+              },
+              {
+                name: "**`📝`** | Description",
+                value: `> ${guild.description || "**`None`**"}`,
               },
               {
                 name: "<a:reliable_info:1030410449579147314> | Features",
@@ -1057,6 +1032,8 @@ The virus can spread from an infected person’s mouth or nose in small liquid p
           "<:reliable_DiscordStaff:1030802121945260042> [**`Discord Staff`**]",
         VerifiedBot:
           "<:reliable_verifedbot:1030802332298006598> [**`Verified Bot`**]",
+        ActiveDeveloper:
+          "<:reliable_activedeveloper:1040628618344288286> [**`Active Developer`**]",
         VerifiedDeveloper:
           "<a:reliable_developer:1030802329139675156> [**`Verified Developer`**]",
       };
@@ -1120,18 +1097,18 @@ The virus can spread from an infected person’s mouth or nose in small liquid p
                 .join("\n") || "**`None`**",
           },
           {
-            name: "`🤝🏻` | Joined Server",
-            value: `<t:${parseInt(target.joinedTimestamp / 1000)}:R>`,
-            inline: true,
-          },
-          {
             name: " `📆` | Account Created",
             value: `<t:${parseInt(user.createdTimestamp / 1000)}:R>`,
             inline: true,
           },
           {
+            name: "`🤝🏻` | Joined Server",
+            value: `<t:${parseInt(target.joinedTimestamp / 1000)}:R>`,
+            inline: true,
+          },
+          {
             name: " `🦸🏻‍♀️` | Nickname",
-            value: `**\`${user.nickname || "**`None`**"}\`**`,
+            value: `**${user.nickname || "**`None`**"}**`,
             inline: true,
           },
           {
@@ -1195,12 +1172,12 @@ The virus can spread from an infected person’s mouth or nose in small liquid p
         .setTitle(`User Permissions`)
         .addFields(
           {
-            name: "‣ User Name",
+            name: "**`•`** User Name",
             value: `> <@${member.id}> (${member.id})`,
             inline: true,
           },
           {
-            name: "‣ User Permissions",
+            name: "**`•`** User Permissions",
             value: `\`\`\`${memberPermissions}\`\`\``,
             inline: false,
           }
@@ -1209,6 +1186,37 @@ The virus can spread from an infected person’s mouth or nose in small liquid p
         .setColor("#0398fc")
         .setFooter({ text: "©2022 | Reliable" });
       interaction.reply({ embeds: [embed], ephemeral: true });
+    } else if (interaction.options.getSubcommand() === "iss-location") {
+      fetch("http://api.open-notify.org/iss-now.json")
+        .then((res) => res.json())
+        .then((out) => {
+          var iss_info = out;
+          var position = iss_info["iss_position"];
+          var latitude = position["latitude"];
+          var longitude = position["longitude"];
+
+          const Embed = new EmbedBuilder()
+            .setTitle("International Space Station Location")
+            .setColor("#0398fc")
+            .addFields(
+              {
+                name: "**`•`** Latitude",
+                value: `> **\`${latitude}\`**`,
+                inline: true,
+              },
+              {
+                name: "**`•`** Longitude",
+                value: `> **\`${longitude}\`**`,
+                inline: true,
+              }
+            )
+            .setImage(
+              `http://c.files.bbci.co.uk/8C58/production/_115182953_issspaceindexsml.jpg`
+            )
+            .setFooter({ text: "©2022 | Reliable" })
+            .setTimestamp();
+          interaction.reply({ embeds: [Embed] });
+        });
     } else {
       interaction.reply({ content: `No sub command choosed` });
     }
