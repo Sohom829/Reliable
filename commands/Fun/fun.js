@@ -42,7 +42,7 @@ module.exports = {
             .setName("target")
             .setDescription("Select the target")
             .setRequired(true)
-        )
+        )       
         .addUserOption((op) =>
           op
             .setName("target-2")
@@ -78,6 +78,17 @@ module.exports = {
             .setRequired(true)
         )
     )
+    .addSubcommand((sub) =>
+      sub
+        .setName("age")
+        .setDescription("Predict the age of a name")
+        .addStringOption((op) =>
+          op
+            .setName("name")
+            .setDescription("Provide the name")
+            .setRequired(true)
+        )
+    )    
     .addSubcommand((sub) =>
       sub
         .setName("first-time")
@@ -477,6 +488,41 @@ module.exports = {
         .setFooter({ text: "©2022 | Reliable" });
 
       interaction.reply({ embeds: [embed] });
+    } else if (interaction.options.getSubcommand() === "first-time") {
+      const user = interaction.options.getUser("target") || "";
+
+      const Embed = new EmbedBuilder()
+        .setTitle("First Time...")
+        .setColor("#0398fc")
+        .setImage(
+          `https://vacefron.nl/api/firsttime?&user=${user.displayAvatarURL({
+            format: "png",
+          })}`
+        )
+        .setFooter({ text: "©2022 | Reliable" })
+        .setTimestamp();
+      interaction.reply({ embeds: [Embed] });
+    } else if (interaction.options.getSubcommand() === "age") {
+      const name = interaction.options.getString("name") || "";
+      
+      fetch(`https://api.agify.io/?name=${name}`)
+        .then((res) => res.json())
+        .then((json) => {
+            const Embed = new EmbedBuilder()
+            .setTitle("Age Guess")
+            .addFields(
+              {
+                name: "Age Guessing",
+                value: `**\`•\` Name**: ${name || "**`Nothing Found`**"}
+**\`•\` Age**: ${json.age || "**`Nothing Found`**"}
+**\`•\` Count**: ${json.count || "**`Nothing Found`**"}`
+              }
+            )
+            .setColor("#0398fc") 
+            .setFooter({ text: "©2022 | Reliable" })
+            .setTimestamp();
+          interaction.reply({ embeds: [Embed] });
+        })
     } else {
       interaction.reply({ content: `No slash command choosed.` });
     }
