@@ -117,6 +117,17 @@ module.exports = {
         .fetch(user.id)
         .catch(console.error);
 
+      if (member.permissions.has(PermissionFlagsBits.BanMembers, false)) {
+        const err_embed = new EmbedBuilder()
+          .setTitle("Error")
+          .setDescription(
+            "❌ | You don't have enough permission to ban members!"
+          )
+          .setColor("#0398fc")
+          .setFooter({ text: "©2022 | Reliable" });
+        return interaction.reply({ embeds: [err_embed] });
+      }
+
       if (!reason) reason = "No reason provided";
       if (member.id === interaction.user.id) {
         const err_embed = new EmbedBuilder()
@@ -173,6 +184,17 @@ module.exports = {
       const member = await interaction.guild.members
         .fetch(user.id)
         .catch(console.error);
+
+      if (member.permissions.has(PermissionFlagsBits.KickMembers, false)) {
+        const err_embed = new EmbedBuilder()
+          .setTitle("Error")
+          .setDescription(
+            "❌ | You don't have enough permission to kick a user!"
+          )
+          .setColor("#0398fc")
+          .setFooter({ text: "©2022 | Reliable" });
+        return interaction.reply({ embeds: [err_embed] });
+      }
 
       if (!reason) reason = "No reason provided";
       if (member.id === interaction.user.id) {
@@ -240,6 +262,16 @@ module.exports = {
             i++;
           }
         });
+        if (member.permissions.has(PermissionFlagsBits.ManageMessages, false)) {
+          const err_embed = new EmbedBuilder()
+            .setTitle("Error")
+            .setDescription(
+              "❌ | You don't have enough permission to clear messages!"
+            )
+            .setColor("#0398fc")
+            .setFooter({ text: "©2022 | Reliable" });
+          return interaction.reply({ embeds: [err_embed] });
+        }
 
         await channel.bulkDelete(filtered, true).then((messages) => {
           Response.setDescription(
@@ -275,6 +307,17 @@ module.exports = {
       const member = await interaction.guild.members
         .fetch(user.id)
         .catch(console.error);
+
+      if (member.permissions.has(PermissionFlagsBits.TimeoutMembers, false)) {
+        const err_embed = new EmbedBuilder()
+          .setTitle("Error")
+          .setDescription(
+            "❌ | You don't have enough permission to timeout a user!"
+          )
+          .setColor("#0398fc")
+          .setFooter({ text: "©2022 | Reliable" });
+        return interaction.reply({ embeds: [err_embed] });
+      }
 
       if (!reason) reason = "No reason provided";
       if (member.id === interaction.user.id) {
