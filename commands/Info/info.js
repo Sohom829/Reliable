@@ -13,8 +13,11 @@ const {
   ActionRowBuilder,
 } = require("discord.js");
 const fetch = require("node-fetch");
-const Canvacord = require("canvacord");
+const moment = require("moment");
 const axios = require("axios");
+const twitter = require("twitter-api.js");
+const translate = require("@iamtraction/google-translate")
+const imdb = require("imdb-api");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -36,6 +39,17 @@ module.exports = {
           option
             .setName("channel")
             .setDescription("Mention the channel")
+            .setRequired(true)
+        )
+    )
+    .addSubcommand((sub) =>
+      sub
+        .setName("movie")
+        .setDescription("View info about a movie")
+        .addStringOption((option) =>
+          option
+            .setName("name")
+            .setDescription("Name of the movie")
             .setRequired(true)
         )
     )
@@ -106,6 +120,29 @@ module.exports = {
     )
     .addSubcommand((sub) =>
       sub
+        .setName("translate")
+        .setDescription("Translate any word/sentence to EN")
+        .addStringOption((option) =>
+          option
+            .setName("query")
+            .setDescription("The text to translate")
+            .setRequired(true)
+        )
+        .addStringOption((option) =>
+          option
+            .setName("from")
+            .setDescription("Source Language.")
+            .setRequired(true)
+        )
+        .addStringOption((option) =>
+          option
+            .setName("to")
+            .setDescription("Destination Language.")
+            .setRequired(true)
+        )
+    )
+    .addSubcommand((sub) =>
+      sub
         .setName("role-perm")
         .setDescription("Shows a role permissions")
         .addRoleOption((op) =>
@@ -114,6 +151,9 @@ module.exports = {
             .setDescription("Select the target")
             .setRequired(true)
         )
+    )
+    .addSubcommand((sub) =>
+      sub.setName("apod").setDescription("Astronomy Picture of the Day")
     )
     .addSubcommand((sub) =>
       sub
@@ -139,6 +179,17 @@ module.exports = {
           op
             .setName("target")
             .setDescription("Select the target")
+            .setRequired(true)
+        )
+    )
+    .addSubcommand((sub) =>
+      sub
+        .setName("twitter")
+        .setDescription("Shows a twitter account information")
+        .addStringOption((op) =>
+          op
+            .setName("account")
+            .setDescription("Mention the account name")
             .setRequired(true)
         )
     )
@@ -834,15 +885,17 @@ The virus can spread from an infected person’s mouth or nose in small liquid p
               {
                 name: "**`🌐`** | General",
                 value: [
-                  `‣ **Created On** <t:${parseInt(
+                  `**\`•\`** **Created On** <t:${parseInt(
                     guild.createdTimestamp / 1000
                   )}:R>`,
-                  `‣ **Server ID** **\`${guild.id}\`**`,
-                  `‣ **Owner** <@${guild.ownerId}> (**\`${guild.ownerId}\`**)`,
-                  `‣ **Language** **\`${new Intl.DisplayNames(["en"], {
+                  `**\`•\`** **Server ID** **\`${guild.id}\`**`,
+                  `**\`•\`** **Owner** <@${guild.ownerId}> (**\`${guild.ownerId}\`**)`,
+                  `**\`•\`** **Language** **\`${new Intl.DisplayNames(["en"], {
                     type: "language",
                   }).of(guild.preferredLocale)}\`**`,
-                  `‣ **Vanity URL** ${guild.vanityURLCode || "**`None`**"}`,
+                  `**\`•\`** **Vanity URL** ${
+                    guild.vanityURLCode || "**`None`**"
+                  }`,
                 ].join("\n"),
               },
               {
@@ -855,7 +908,7 @@ The virus can spread from an infected person’s mouth or nose in small liquid p
                   guild.features
                     ?.map(
                       (feature) =>
-                        `<:reliable_dot:1033023030449950812> ${toPascalCase(
+                        `<:reliable_right:1042843202429919272> ${toPascalCase(
                           feature,
                           " "
                         )}`
@@ -913,21 +966,21 @@ The virus can spread from an infected person’s mouth or nose in small liquid p
               {
                 name: `**\`🍃\`** | Channels, Threads & Categories (**\`${totalChannels}\`**)`,
                 value: [
-                  `‣ **Text** **\`${getChannelTypeSize([
+                  `**\`•\`** **Text** **\`${getChannelTypeSize([
                     ChannelType.GuildText,
                     ChannelType.GuildForum,
                     ChannelType.GuildNews,
                   ])}\`**`,
-                  `‣ **Voice** **\`${getChannelTypeSize([
+                  `**\`•\`** **Voice** **\`${getChannelTypeSize([
                     ChannelType.GuildVoice,
                     ChannelType.GuildStageVoice,
                   ])}\`**`,
-                  `‣ **Threads** **\`${getChannelTypeSize([
+                  `**\`•\`** **Threads** **\`${getChannelTypeSize([
                     ChannelType.GuildPublicThread,
                     ChannelType.GuildPrivateThread,
                     ChannelType.GuildNewsThread,
                   ])}\`**`,
-                  `‣ **Categories** **\`${getChannelTypeSize([
+                  `**\`•\`** **Categories** **\`${getChannelTypeSize([
                     ChannelType.GuildCategory,
                   ])}\`**`,
                 ].join("\n"),
@@ -938,29 +991,31 @@ The virus can spread from an infected person’s mouth or nose in small liquid p
                   emojis.cache.size + stickers.cache.size
                 }\`**)`,
                 value: [
-                  `‣ **Animated** **\`${
+                  `**\`•\`** **Animated** **\`${
                     emojis.cache.filter((emoji) => emoji.animated).size
                   }\`**`,
-                  `‣ **Static** **\`${
+                  `**\`•\`** **Static** **\`${
                     emojis.cache.filter((emoji) => !emoji.animated).size
                   }\`**`,
-                  `‣ **Stickers** **\`${stickers.cache.size}\`**`,
+                  `**\`•\`** **Stickers** **\`${stickers.cache.size}\`**`,
                 ].join("\n"),
                 inline: true,
               },
               {
-                name: "**`🍁` | ** Nitro",
+                name: "**`🍁` | ** Boosting",
                 value: [
-                  `‣ **Tier** **\`${guild.premiumTier || "**`None`**"}\`**`,
-                  `‣ **Boosts** **\`${
-                    guild.premiumSubscriptionCount || "**`None`**"
+                  `**\`•\`** **Tier** **\`${
+                    guild.premiumTier || "**None**"
                   }\`**`,
-                  `‣ **Boosters** **\`${
+                  `**\`•\`** **Boosts** **\`${
+                    guild.premiumSubscriptionCount || "**None**"
+                  }\`**`,
+                  `**\`•\`** **Boosters** **\`${
                     guild.members.cache.filter(
                       (member) => member.roles.premiumSubscriberRole
-                    ).size || "**`None`**"
+                    ).size || "**None**"
                   }\`**`,
-                  `‣ **Total Boosters** **\`${
+                  `**\`•\`** **Total Boosters** **\`${
                     guild.members.cache.filter((member) => member.premiumSince)
                       .size
                   }\`**`,
@@ -1217,6 +1272,158 @@ The virus can spread from an infected person’s mouth or nose in small liquid p
             .setTimestamp();
           interaction.reply({ embeds: [Embed] });
         });
+    } else if (interaction.options.getSubcommand() === "apod") {
+      fetch(
+        "https://api.nasa.gov/planetary/apod?api_key=l2eGLkw7K710Z3JKP9abb0v0VGfRC03rJgo3frvo"
+      )
+        .then((res) => res.json())
+        .then((json) => {
+          const Embed = new EmbedBuilder()
+            .setTitle(`${json.title}`)
+            .setColor("#0398fc")
+            .setDescription(`>>> **${json.explanation}**`)
+            .addFields(
+              {
+                name: "**`•`** Last Updated",
+                value: `> **\`${json.date}\`**`,
+                inline: true,
+              },
+              {
+                name: "**`•`** Copyright",
+                value: `> **\`${json.copyright || "No one Found!"}\`**`,
+                inline: true,
+              }
+            )
+            .setImage(`${json.hdurl}`)
+            .setFooter({ text: "©2022 | Reliable" });
+          interaction.reply({ embeds: [Embed] });
+        });
+    } else if (interaction.options.getSubcommand() === "translate") {
+      const query = interaction.options.getString("query");
+      const raw = query;
+      const from = interaction.options.getString("from");
+      const to = interaction.options.getString("to");
+try {
+      const translated = await translate(query, { from: `${from}`, to: `${to}` });
+      const Embed = new EmbedBuilder()
+        .setTitle("Translation")
+        .addFields(
+          {
+            name: "**`•` From**",
+            value: `> **\`${from}\`**`,
+            inline: true
+          },
+          {
+            name: "**`•` To**",
+            value: `> **\`${to}\`**`,
+            inline: true
+          },          
+          { name: "**`•` Raw**", value: "```" + raw + "```" },
+          { name: "**`•` Translated**", value: "```" + translated.text + "```" }
+        )
+        .setTimestamp()
+        .setColor("#0398fc")
+        .setFooter({ text: "©2022 | Reliable" });
+
+      return await interaction.reply({ embeds: [Embed] })
+        } catch (err) {
+          console.log(err)
+
+          const err_embed = new EmbedBuilder()
+          .setTitle("Error")
+          .setDescription("**❌ | Please send a valid** [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) **destination language code.**")
+          .setTimestamp()
+          .setColor("#0398fc")
+          .setFooter({ text: "©2022 | Reliable" });
+        }
+    } else if (interaction.options.getSubcommand() === "twitter") {
+      const user = interaction.options.getString("account");
+
+      try {
+        const body = await twitter.users(user);
+
+        const tweet = new EmbedBuilder()
+          .setTitle("Twitter Account")
+          .addFields({
+            name: "Twitter Information Listed",
+            value: `**\`•\` Account ID**: **\`${body.id}\`**
+**\`•\` Followers**: **\`${body.followers_count.toLocaleString()}\`**
+**\`•\` Tweets**: **\`${body.statuses_count.toLocaleString()}\`**
+**\`•\` Following**: **\`${body.friends_count.toLocaleString()}\`**
+**\`•\` Account Verified**: **<a:reliable_verified:1041749335735537704> ${
+              body.verified || "`No`"
+            }**
+**\`•\` Account Creation Date**: **\`${moment
+              .utc(body.created_at)
+              .format("dddd, MMMM, Do YYYY")}\`**
+**\`•\` Account Description**: \`\`\`${body.description || "None"}\`\`\``,
+          })
+          .setThumbnail(body.profile_image_url_https.replace("_normal", ""))
+          .setImage(body.profile_banner_url)
+          .setTimestamp()
+          .setColor("#0398fc")
+          .setFooter({ text: "©2022 | Reliable" });
+        interaction.reply({ embeds: [tweet] });
+      } catch (e) {
+        console.log(e);
+
+        if (e.status === 403) {
+          const err_embed = new EmbedBuilder()
+            .setTitle(`Error`)
+            .setDescription(
+              "**❌| This user is in private mode, or deleted account!**"
+            )
+            .setTimestamp()
+            .setColor("#0398fc")
+            .setFooter({ text: "©2022 | Reliable" });
+
+          interaction.reply({ embeds: [err_embed], ephemeral: true });
+        }
+
+        if (e.status === 404) {
+          const err_embed2 = new EmbedBuilder()
+            .setTitle(`Error`)
+            .setDescription(`**❌| Unknown error: \`${e.message}\`**`)
+            .setTimestamp()
+            .setColor("#0398fc")
+            .setFooter({ text: "©2022 | Reliable" });
+
+          interaction.reply({ embeds: [err_embed2], ephemeral: true });
+        }
+      }
+    } else if (interaction.options.getSubcommand() === "movie") {
+    const imob = new imdb.Client({apiKey: "5e36f0db"}) 
+    let movie = await imob.get({'name': interaction.options.getString("name")})
+
+try {
+      const Embed = new EmbedBuilder()
+      .setTitle(`${movie.title}`)
+      .setImage(movie.poster)
+      .setDescription(`> **${movie.plot}**`)
+      .addFields(
+        {
+          name: "Movie Info",
+          value: `**\`•\` Country**: **\`${movie.country}\`**
+**\`•\` Languages**: **\`${movie.languages}\`**
+**\`•\` Type**: **\`${movie.type}\`**
+**\`•\` Ratings**: **\`${movie.rating}\`**`
+        }
+      )
+      .setTimestamp()
+      .setColor("#0398fc")
+      .setFooter({ text: "©2022 | Reliable" });
+
+      return await interaction.reply({ embeds: [Embed] })
+        } catch (err) {
+          console.log(err)
+
+          const err_embed = new EmbedBuilder()
+          .setTitle("Error")
+          .setDescription("**❌ | Please send a valid movie name!**")
+          .setTimestamp()
+          .setColor("#0398fc")
+          .setFooter({ text: "©2022 | Reliable" });
+        }
     } else {
       interaction.reply({ content: `No sub command choosed` });
     }
