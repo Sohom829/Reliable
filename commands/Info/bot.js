@@ -364,18 +364,11 @@ module.exports = {
         .setColor("#0398fc")
         .setFooter({ text: "©2022 | Reliable" })
         .setTitle("Credits")
-        .addFields(
-          {
-            name: `<a:reliable_developers:1030038452407898142> **Developers**`,
-            value: `> <@967657941937291265> & <@783661052738011176>`,
-            inline: false,
-          },
-          {
-            name: `<:reliable_logo:1032950208130191370> **GFX Designer**`,
-            value: `> <@991711412458115084>`,
-            inline: false,
-          }
-        );
+        .addFields({
+          name: `<a:reliable_developers:1030038452407898142> **Developers**`,
+          value: `> <@967657941937291265> & <@783661052738011176>`,
+          inline: false,
+        });
 
       const github = new ActionRowBuilder().addComponents(
         new ButtonBuilder()
@@ -396,20 +389,27 @@ module.exports = {
         .setColor("#0398fc")
         .setFooter({ text: "Made with 🖤 by Sohom829#8350 & Alpha•#9258" })
         .setThumbnail(client.user.displayAvatarURL())
-        .addFields({
-          name: `**Features,**`,
-          value: `>>> <:reliable_moderation:1030443113958875236> **Moderation**,
+        .addFields(
+          {
+            name: `**Features,**`,
+            value: `>>> <:reliable_moderation:1030443113958875236> **Moderation**,
 <a:reliable_info:1030410449579147314> **Information**,
 <:reliable_giveaway:1038804433116614718> **Giveaway**,
 <:reliable_logo:1032950208130191370> **Bot**,
 <a:reliable_fun:1033313610048483389> **Fun**,
 <a:reliable_minecraft:1040571549473849387> **Minecraft**,
 <a:reliable_utility:1030442601721102346> **Utility**`,
-          inline: false,
-        })
+            inline: true,
+          },
+          {
+            name: "Reliable Launched Date",
+            value: "> <t:1665849066:F>",
+            inline: true,
+          }
+        )
         .setTimestamp()
         .setImage(
-          `https://media.discordapp.net/attachments/1029807885116506122/1034897221109424178/IMG_20221025_221311.jpg`
+          `https://cdn.discordapp.com/attachments/998278920614989895/1044656009462956073/IMG_20221122_224953.jpg`
         )
         .setTitle(`${client.user.username} - Command Panel`)
         .setDescription(
@@ -424,38 +424,45 @@ module.exports = {
           .setPlaceholder("Select a category by clicking this")
           .addOptions(
             {
-              label: "🔰 Moderation",
+              label: "Moderation",
               description: "View Moderation Commands",
+              emoji: "<:reliable_moderation:1030443113958875236>",              
               value: `first_option`,
             },
             {
-              label: "🔮 Info",
+              label: "Info",
               description: "View Info Commands",
+              emoji: "<a:reliable_info:1030410449579147314>",              
               value: "second_option",
             },
             {
-              label: "😍 Fun",
+              label: "Fun",
               description: "View Fun commands",
+              emoji: "<a:reliable_fun:1033313610048483389>",
               value: "third_option",
             },
             {
-              label: "🤖 Bot",
+              label: "Bot",
               description: "View default bot commands",
+              emoji: "<:reliable_logo:1032950208130191370>",
               value: "fourth_option",
             },
             {
-              label: "🎉 Giveaway",
+              label: "Giveaway",
               description: "View all giveaway commands",
+              emoji: "<:reliable_giveaway:1038804433116614718>",
               value: "fifth_option",
             },
             {
-              label: "⛏ Minecraft",
+              label: "Minecraft",
               description: "View Minecraft Commands",
+              emoji: "<a:reliable_minecraft:1040571549473849387>",
               value: `sixth_option`,
             },
             {
-              label: "⚡ Utility",
+              label: "Utility",
               description: "View all Utility commands",
+              emoji: "<a:reliable_utility:1030442601721102346>",
               value: "seventh_option",
             }
           )
