@@ -12,7 +12,6 @@ const {
 const { execute } = require("./giveaway");
 const ms = require("ms");
 const config = require("../../config.json");
-const messages = require("../../utils/messages");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -153,13 +152,15 @@ module.exports = {
           noWinner:
             "> **`Giveaway cancelled, Not enough entrants to determine a winner!`**",
           hostedBy: `> **\`Hosted by\`**: ${interaction.user}`,
+          embedColor: "#0398fc",
+          embedColorEnd: "#0398fc",
           paused:
-            '"<a:reliable_alert:1039201857819648000> **GIVEAWAY PAUSED** <a:reliable_alert:1039201857819648000> ',
+            '"<a:reliable_alert:1039201857819648000> **GIVEAWAY PAUSED** <a:reliable_alert:1039201857819648000>',
           infiniteDurationText: "**`NEVER`**",
           error: "> **`Reroll cancelled, no valid participations`**",
           congrat:
             "**New winner(s): {winners}! Congratulations, your prize is `{this.prize}`**!",
-          winners: "> **Winner(s)**",
+          winners: "🏆 - **Winner(s)**",
           endedAt: "Ended at",
         },
       });
