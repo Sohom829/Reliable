@@ -11,6 +11,7 @@ const {
 const fetch = require("node-fetch");
 const Canvacord = require("canvacord");
 const axios = require("axios");
+const ms = require("ms");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -21,6 +22,20 @@ module.exports = {
     )
     .addSubcommand((sub) =>
       sub.setName("cat-fact").setDescription("Generate a random cat facts")
+    )
+    .addSubcommand((sub) =>
+      sub.setName("pickupline").setDescription("👉 Generate some pickuplines!")
+    )
+    .addSubcommand((sub) =>
+      sub
+        .setName("lovemeter")
+        .setDescription("Displays love meter between two users.")
+        .addUserOption((op) =>
+          op.setName("user").setDescription("Mention the user").setRequired(true)
+        )
+        .addUserOption((op) =>
+          op.setName("user2").setDescription("Mention the user").setRequired(false)
+        )
     )
     .addSubcommand((sub) =>
       sub
@@ -35,6 +50,39 @@ module.exports = {
     )
     .addSubcommand((sub) =>
       sub
+        .setName("8ball")
+        .setDescription("🎱 Ask the magic 8ball a question")
+        .addStringOption((op) =>
+          op
+            .setName("question")
+            .setDescription("The question you want to ask the magic 8ball")
+            .setRequired(true)
+        )
+    )
+    .addSubcommand((sub) =>
+      sub
+        .setName("reverse")
+        .setDescription("◀ Sends the same message that you had sent but reversed.")
+        .addStringOption((op) =>
+          op
+            .setName("text")
+            .setDescription("The text to reverse")
+            .setRequired(true)
+        )
+    )
+    .addSubcommand((sub) =>
+      sub
+      .setName("pp")
+      .setDescription("PP size")
+      .addUserOption((option) =>
+        option
+          .setName("user")
+          .setDescription("User to PP rate")
+          .setRequired(true)
+      )
+    )
+    .addSubcommand((sub) =>
+      sub
         .setName("distract")
         .setDescription("Distracted Dude")
         .addUserOption((op) =>
@@ -42,7 +90,7 @@ module.exports = {
             .setName("target")
             .setDescription("Select the target")
             .setRequired(true)
-        )       
+        )
         .addUserOption((op) =>
           op
             .setName("target-2")
@@ -88,7 +136,10 @@ module.exports = {
             .setDescription("Provide the name")
             .setRequired(true)
         )
-    )    
+    )
+    .addSubcommand((sub) =>
+      sub.setName("advice").setDescription("Gives you random advices")
+    )
     .addSubcommand((sub) =>
       sub
         .setName("first-time")
@@ -498,31 +549,271 @@ module.exports = {
           `https://vacefron.nl/api/firsttime?&user=${user.displayAvatarURL({
             format: "png",
           })}`
-        )
-        .setFooter({ text: "©2022 | Reliable" })
-        .setTimestamp();
-      interaction.reply({ embeds: [Embed] });
-    } else if (interaction.options.getSubcommand() === "age") {
-      const name = interaction.options.getString("name") || "";
-      
-      fetch(`https://api.agify.io/?name=${name}`)
+        );
+    } else if (interaction.options.getSubcommand() === "advice") {
+      fetch(`https://api.adviceslip.com/advice`)
         .then((res) => res.json())
         .then((json) => {
-            const Embed = new EmbedBuilder()
-            .setTitle("Age Guess")
-            .addFields(
-              {
-                name: "Age Guessing",
-                value: `**\`•\` Name**: ${name || "**`Nothing Found`**"}
-**\`•\` Age**: ${json.age || "**`Nothing Found`**"}
-**\`•\` Count**: ${json.count || "**`Nothing Found`**"}`
-              }
-            )
-            .setColor("#0398fc") 
+          const Embed = new EmbedBuilder()
+            .setTitle("Advice")
+            .setDescription(`> **${json.slip.advice}**`)
+            .setColor("#0398fc")
             .setFooter({ text: "©2022 | Reliable" })
             .setTimestamp();
           interaction.reply({ embeds: [Embed] });
-        })
+        });
+    } else if (interaction.options.getSubcommand() === "age") {
+      const name = interaction.options.getString("name") || "";
+
+      fetch(`https://api.agify.io/?name=${name}`)
+        .then((res) => res.json())
+        .then((json) => {
+          const Embed = new EmbedBuilder()
+            .setTitle("Age Guess")
+            .addFields({
+              name: "Age Guessing",
+              value: `**\`•\` Name**: ${name || "**`Nothing Found`**"}
+**\`•\` Age**: ${json.age || "**`Nothing Found`**"}
+**\`•\` Count**: ${json.count || "**`Nothing Found`**"}`,
+            })
+            .setColor("#0398fc")
+            .setFooter({ text: "©2022 | Reliable" })
+            .setTimestamp();
+          interaction.reply({ embeds: [Embed] });
+        });
+    } else if (interaction.options.getSubcommand() === "8ball") {
+      const inquiry = interaction.options.getString("question");
+      try {
+        const fortunes = [
+          "yep!",
+          "i guess",
+          "probably not",
+          "YES YES YES!!!11",
+          "hell no",
+          "um.. what?",
+          "sorry, say again?",
+          "what is that",
+          "you know what just ask someone else",
+          "i mean sure, if you believe",
+          "without doubt",
+          "without doubt      no",
+          "sorry son",
+          "possibly",
+          "in one universe out of 9876567... yes",
+        ];
+        const fortune = fortunes[Math.floor(Math.random() * fortunes.length)];
+
+        const Embed = new EmbedBuilder()
+          .setTimestamp()
+          .setColor("#0398fc")
+          .setFooter({ text: "©2022 | Reliable" })
+          .setTitle(`${inquiry}`)
+          .setDescription(`**🎱 | \`${fortune}\`**`);
+
+        interaction.reply({ embeds: [Embed] });
+      } catch (err) {
+        console.log(err);
+
+        const err_embed = new EmbedBuilder()
+          .setTitle("Error")
+          .setDescription(
+            "**❌ | The magical 8ball is having some issues please try again later!**"
+          )
+          .setTimestamp()
+          .setColor("#0398fc")
+          .setFooter({ text: "©2022 | Reliable" });
+
+        interaction.reply({ embeds: [err_embed], ephemeral: true });
+      }
+    } else if (interaction.options.getSubcommand() === "pp") {
+      const member = interaction.options.getMember("user")
+
+      try {
+        const size = Math.floor(Math.random() * 21)
+      
+        let PP = "8"
+      
+        for (let i = 0; i < size; i++) {
+          PP += "="
+        }
+      
+        PP += "D"
+
+        const Embed = new EmbedBuilder()
+          .setTimestamp()
+          .setColor("#0398fc")
+          .setFooter({ text: "©2022 | Reliable" })
+          .setTitle(`${member.displayName}'s PP`)
+          .setDescription(`\`\`\`${PP}\`\`\``);
+
+        interaction.reply({ embeds: [Embed] });
+      } catch (err) {
+        console.log(err);
+
+        const err_embed = new EmbedBuilder()
+          .setTitle("Error")
+          .setDescription(
+            "**❌ | The pp is having some issues please try again later.**"
+          )
+          .setTimestamp()
+          .setColor("#0398fc")
+          .setFooter({ text: "©2022 | Reliable" });
+
+        interaction.reply({ embeds: [err_embed], ephemeral: true });
+      }
+    } else if (interaction.options.getSubcommand() === "reverse") {
+
+      try {
+        const text = interaction.options.getString("text")
+        const converted = text.split("").reverse().join("");
+
+        const Embed = new EmbedBuilder()
+          .setTimestamp()
+          .setColor("#0398fc")
+          .setFooter({ text: "©2022 | Reliable" })
+          .setTitle(`◀ | Reversed`)
+          .setDescription(`\`\`\`${converted}\`\`\``);
+
+        interaction.reply({ embeds: [Embed] });
+      } catch (err) {
+        console.log(err);
+
+        const err_embed = new EmbedBuilder()
+          .setTitle("Error")
+          .setDescription(
+            "**❌ | Reverse Machine crashed! Trying to fix it.**"
+          )
+          .setTimestamp()
+          .setColor("#0398fc")
+          .setFooter({ text: "©2022 | Reliable" });
+
+        interaction.reply({ embeds: [err_embed], ephemeral: true });
+      }
+    } else if (interaction.options.getSubcommand() === "pickupline") {
+
+      try {
+        const line = [
+          "Do you like raisins? How do you feel about a date?",
+          "I hope you know CPR because you take my breath away!",
+          "You've made me so nervous that I've totally forgotten my standard pick-up line.",
+          "Are you a trap card? Because I’ve fallen for you.",
+          "Roses are red, violets are blue, omae wa mo shindeiru",
+          "Baby, come with me and you'll be Going Merry.",
+          "I think I need a paralyze heal! Because you're stunning!",
+          "I'm no photographer, but I can picture us together.",
+          "Do you have a Death Note? Because everytime you smile, I feel like I'm having a heart attack!",
+          "Are you Saitama? Because you've got me down in one move!",
+          "Are you French? Because Eiffel for you.",
+          "You must be better than Kuuhaku. Because when I first saw you, you already won my heart!",
+          "I must be in a museum, because you truly are a work of art.",
+          "Do you believe in fate? How about you stay the night? (Fate/Night; this one wasn't too apparant..)",
+          "Just say yes and I'll give you more than seven Eurekas!",
+          "You're like the 3D Maneuver gear. I won't stand a chance in this world without you!",
+          "You remind me of Menma. Because even when I can't see you, I still feel you inside my heart!",
+          "If I just had a Geass, I'd command you to be mine!",
+          "Extra cursed student or not, I wont even think of ignoring you! (From anime *another*; not too apparant..rip)",
+          "I don't need a Sharingan to see how beautiful you are!",
+          "Are you Kikyo? Because I think you shot an arrow through my heart!",
+          "Even if it means risking my existence, I'll cross different world lines just to find you! (Steins;Gate)",
+          "Hey! Are you the railgun? Because I can feel a spark! (Toaru Kagaku no Railgun)",
+          "Are you from the Bath House? Because you take my spirit away. (Spirited Away)",
+          "Omae wa mo shindeiru!",
+          "You must be Kira, because you just gave me a heart attack!",
+          "You're cooler than Grey's ice shell!",
+          "You're more delicious than Ciel's soul!",
+          "Our love is like Grell, it never seems to die!",
+          "We were born to make history!!",
+          "If you were a potato, you would be a good potato.",
+          "I don't need a Death Note, your beauty is killer!",
+          "I love you as much as Ryuk loves apples!",
+          "I'll buy you ice cream, just be careful not to drop it  ...🍦",
+          "Call me All Might, because I’m just looking to Texas Smash!",
+          "There is something wrong with my cell phone. It doesn't have your number in it.",
+          "I don't need pickup lines, because they don't work on corpses.",
+          "Kanye feel the love?",
+          "You can take me to flavour town!!",
+          "Hey, you're pretty good!!",
+          "I'd go full homo for you!",
+          "I'm a bot that no one can beat so get your mind out of this thing",
+          "I wish they'd all die, except for you!",
+        ];
+
+        const Embed = new EmbedBuilder()
+          .setTimestamp()
+          .setColor("#0398fc")
+          .setFooter({ text: "©2022 | Reliable" })
+          .setTitle(`Pickup Line`)
+          .setDescription(`\`\`\`${line[Math.round(Math.random() * (line.length - 1))]}\`\`\``);
+
+        interaction.reply({ embeds: [Embed] });
+      } catch (err) {
+        console.log(err);
+
+        const err_embed = new EmbedBuilder()
+          .setTitle("Error")
+          .setDescription(
+            "**❌ | Pickup Machine crashed! Trying to fix it.**"
+          )
+          .setTimestamp()
+          .setColor("#0398fc")
+          .setFooter({ text: "©2022 | Reliable" });
+
+        interaction.reply({ embeds: [err_embed], ephemeral: true });
+      }
+    } else if (interaction.options.getSubcommand() === "lovemeter") {
+
+      try {
+        const user = interaction.options.getMember('user');
+        const user2 = interaction.options.getMember('user2') || interaction.member;
+        if (user.id === user2.id) {
+          const err_embed = new EmbedBuilder()
+          .setTitle("Error")
+          .setDescription(
+            "**❌ | I can only calculate love percentage between two different people.**"
+          )
+          .setTimestamp()
+          .setColor("#0398fc")
+          .setFooter({ text: "©2022 | Reliable" });
+
+          interaction.reply({ embeds: [err_embed], ephemeral: true })
+        }
+
+        const love = Math.random() * 100;
+        const loveIndex = Math.floor(love / 10);
+        const loveLevel = '❤️'.repeat(loveIndex) + '♡'.repeat(10 - loveIndex);
+
+        const Embed = new EmbedBuilder()
+          .setTimestamp()
+          .setColor("#0398fc")
+          .setFooter({ text: "©2022 | Reliable" })
+          .setTitle(`❤️ | Love`)
+          .addFields(
+            {
+              name: "**`•`** Lovers",
+              value: `**\`${user.displayName}\`** and **\`${user2.displayName}\`**`,
+              inline: true
+            },
+            {
+              name: "**`•`** Love Meter",
+              value: `**\`${Math.floor(love)}%\`: \`${loveLevel}\`**`,
+              inline: true
+            },
+          )
+        interaction.reply({ embeds: [Embed] });
+      } catch (err) {
+        console.log(err)
+
+        const err_embed = new EmbedBuilder()
+          .setTitle("Error")
+          .setDescription(
+            "**❌ | Love Machine crashed! Trying to fix it.**"
+          )
+          .setTimestamp()
+          .setColor("#0398fc")
+          .setFooter({ text: "©2022 | Reliable" });
+
+        interaction.reply({ embeds: [err_embed], ephemeral: true });
+      }
     } else {
       interaction.reply({ content: `No slash command choosed.` });
     }
