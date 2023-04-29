@@ -567,7 +567,7 @@ The virus can spread from an infected person’s mouth or nose in small liquid p
             );
           interaction.reply({ embeds: [embed] });
         });
-    } else if (interaction.options.getSubcommand() === "member-count") {
+    } else if (interaction.options.getSubcommand() === "membercount") {
       const members = interaction.guild.members.cache;
       const dndusers = members.filter(
         (member) => !member.user.bot && member.presence?.status === "dnd"

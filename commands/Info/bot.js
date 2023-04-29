@@ -419,6 +419,7 @@ module.exports = {
 <a:reliable_fun:1033313610048483389> **Fun**,
 <a:reliable_afk:1070543249002991676> **AFK**,
 <a:reliable_birthday:1070559247693250610> **Birthday**,
+<:reliable_family:1071286177887436801> **Family**,
 <:reliable_DiscordStaff:1030802121945260042> **Server Management**,
 <a:reliable_games:1048178867149488139> **Games**,
 <a:reliable_notepad:1071180235896266852> **Notepad**,
@@ -537,6 +538,12 @@ module.exports = {
               description: "View all Notepad commands",
               emoji: "<a:reliable_notepad:1071180235896266852>",
               value: "fifthteen_option",
+            }, 
+            {
+              label: "Family",
+              description: "View all Family commands",
+              emoji: "<:reliable_family:1071286177887436801>",
+              value: "sixteen_option",
             }, 
           )
       );

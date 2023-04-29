@@ -1,11 +1,14 @@
 const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord-api-types/v9");
-require('dotenv').config();
+require("dotenv").config();
 const fs = require("fs");
-const chalk = require("chalk")
-var AsciiTable = require('ascii-table')
-var table = new AsciiTable()
-table.setHeading('  SlashCommand  ', '  Status  ').setBorder('|', '═', '0', '0');
+const chalk = require("chalk");
+var AsciiTable = require("ascii-table");
+const { logTaDAsync, renderLines, logEmoji } = require("syc-logger");
+var table = new AsciiTable();
+table
+  .setHeading("━━━━━━━━━━━━━┫ Slash Commands ┣━━━━━━━━━━━━━", "")
+  .setBorder("|", "═", "0", "0");
 
 module.exports = (client) => {
   client.handleCommands = async () => {
@@ -22,33 +25,45 @@ module.exports = (client) => {
         commands.set(command.data.name, command);
         commandsArray.push(command.data.toJSON());
 
-        table.addRow(command.data.name, '» 🔥 «');
-        
+        table.addRow(command.data.name, "» Success «");
       }
     }
 
     const clientId = process.env.CLIENT_ID;
-    const rest = new REST({ version: `9` }).setToken(
-      process.env.Token
-    );
+    const rest = new REST({ version: `9` }).setToken(process.env.Token);
 
     try {
-      console.log(chalk.red(`Refresing • application (/) commands`));
-      console.log(chalk.green(table.toString()));
+      console.log(
+        chalk.cyan("[ INFORMATION ]") +
+          chalk.white.bold(" | ") +
+          chalk.blue(`${new Date().toLocaleDateString()}`) +
+          chalk.white.bold(" | ") +
+          chalk.cyan("Application Commands (/)") +
+          chalk.white(": ") +
+          chalk.greenBright(`Refresing`)
+      );
+      console.log(chalk.cyan.bold(table.toString()));
 
       await rest.put(Routes.applicationCommands(clientId), {
         body: client.commandsArray,
       });
-      
-  console.log(chalk.yellow('Slash Commands • Loaded'))
+      console.log(
+        chalk.cyan("[ INFORMATION ]") +
+          chalk.white.bold(" | ") +
+          chalk.blue(`${new Date().toLocaleDateString()}`) +
+          chalk.white.bold(" | ") +
+          chalk.cyan("Slash Commands (/)") +
+          chalk.white(": ") +
+          chalk.greenBright(`Connected`)
+      );
     } catch (err) {
       console.log(err);
-    } 
+    }
   };
 };
 
 /**
  * @INFO
  * Bot Coded by IamSohom829#0829 & Alpha•#9258
- * You can't use this codes without permissions! 
+ * You can't use this codes without permissions!
  */

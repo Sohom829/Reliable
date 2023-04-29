@@ -124,8 +124,8 @@ module.exports = {
         const err_embed2 = new EmbedBuilder()
           .setTitle("Error")
           .setDescription(":x: | **Selected channel is not text-based.**")
-          .setColor("#0398fc")
-          .setFooter({ text: "©2022 | Reliable" })
+          .setColor("#2F3136")
+          .setFooter({ text: "©2022 - 2023 | Reliable" })
           .setTimestamp();
         interaction.reply({ embeds: [err_embed2], ephemeral: true });
       }
@@ -148,12 +148,14 @@ module.exports = {
             "> Be the first to react with React with <:reliable_giveaway:1038804433116614718> to participate!",
           drawing: "> **`Ends in`**: {timestamp}",
           winMessage: "**Congratulations, {winners}! You won `{this.prize}`**!",
-          embedFooter: "©2022 | Reliable",
+          embedFooter: "©2022 - 2023 | Reliable",
           noWinner:
             "> **`Giveaway cancelled, Not enough entrants to determine a winner!`**",
           hostedBy: `> **\`Hosted by\`**: ${interaction.user}`,
-          embedColor: "#0398fc",
-          embedColorEnd: "#0398fc",
+          embedColor: "#2F3136",
+          embedColorEnd: "#2F3136",
+          image: "https://t3.ftcdn.net/jpg/01/96/01/64/360_F_196016432_MTICUoNu3JyK91qoNblvjOziBkNV3D4F.jpg",
+          thumbnail: interaction.guild.iconURL({ size: 1024 }),
           paused:
             '"<a:reliable_alert:1039201857819648000> **GIVEAWAY PAUSED** <a:reliable_alert:1039201857819648000>',
           infiniteDurationText: "**`NEVER`**",
@@ -170,8 +172,8 @@ module.exports = {
         .setDescription(
           `✅ | **The giveaway for the \`${giveawayPrize}\` is starting in ${giveawayChannel}!**`
         )
-        .setColor("#0398fc")
-        .setFooter({ text: "©2022 | Reliable" })
+        .setColor("#2F3136")
+        .setFooter({ text: "©2022 - 2023 | Reliable" })
         .setTimestamp();
 
       await interaction.reply({ embeds: [giveaway], ephemeral: true });
@@ -193,8 +195,8 @@ module.exports = {
           .setDescription(
             `❌ | **Unable to find a giveaway for \`${query}\`.**`
           )
-          .setColor("#0398fc")
-          .setFooter({ text: "©2022 | Reliable" })
+          .setColor("#2F3136")
+          .setFooter({ text: "©2022 - 2023 | Reliable" })
           .setTimestamp();
 
         interaction.reply({ embeds: [err_embed], ephemeral: true });
@@ -204,8 +206,8 @@ module.exports = {
         const err_embed2 = new EmbedBuilder()
           .setTitle("Error")
           .setDescription(`❌ | **The giveaway is not ended yet.**`)
-          .setColor("#0398fc")
-          .setFooter({ text: "©2022 | Reliable" })
+          .setColor("#2F3136")
+          .setFooter({ text: "©2022 - 2023 | Reliable" })
           .setTimestamp();
 
         interaction.reply({ embeds: [err_embed2], ephemeral: true });
@@ -217,8 +219,8 @@ module.exports = {
           const rerolled = new EmbedBuilder()
             .setTitle("Success")
             .setDescription(`✅ | **Giveaway rerolled!**`)
-            .setColor("#0398fc")
-            .setFooter({ text: "©2022 | Reliable" })
+            .setColor("#2F3136")
+            .setFooter({ text: "©2022 - 2023 | Reliable" })
             .setTimestamp();
 
           interaction.reply({ embeds: [rerolled] });
@@ -249,8 +251,8 @@ module.exports = {
           .setDescription(
             `❌ | Unable to find a giveaway for \`${getGiveaway}\``
           )
-          .setColor("#0398fc")
-          .setFooter({ text: "©2022 | Reliable" })
+          .setColor("#2F3136")
+          .setFooter({ text: "©2022 - 2023 | Reliable" })
           .setTimestamp();
 
         interaction.reply({ embeds: [err_embed], ephemeral: true });
@@ -260,8 +262,8 @@ module.exports = {
         const err_embed2 = new EmbedBuilder()
           .setTitle("Error")
           .setDescription(`❌ | This giveaway is already paused.`)
-          .setColor("#0398fc")
-          .setFooter({ text: "©2022 | Reliable" })
+          .setColor("#2F3136")
+          .setFooter({ text: "©2022 - 2023 | Reliable" })
           .setTimestamp();
 
         interaction.reply({ embeds: [err_embed2], ephemeral: true });
@@ -271,8 +273,8 @@ module.exports = {
         const paused = new EmbedBuilder()
           .setTitle("Success")
           .setDescription(`✅ | Giveaway paused!`)
-          .setColor("#0398fc")
-          .setFooter({ text: "©2022 | Reliable" })
+          .setColor("#2F3136")
+          .setFooter({ text: "©2022 - 2023 | Reliable" })
           .setTimestamp();
 
         interaction.reply({ embeds: [paused], ephemeral: true });
@@ -297,8 +299,8 @@ module.exports = {
           .setDescription(
             `❌ | Unable to find a giveaway for \`${getGiveaway}\``
           )
-          .setColor("#0398fc")
-          .setFooter({ text: "©2022 | Reliable" })
+          .setColor("#2F3136")
+          .setFooter({ text: "©2022 - 2023 | Reliable" })
           .setTimestamp();
 
         interaction.reply({ embeds: [err_embed], ephemeral: true });
@@ -308,8 +310,8 @@ module.exports = {
         const err_embed = new EmbedBuilder()
           .setTitle("Error")
           .setDescription(`❌ | This giveaway is not paused.`)
-          .setColor("#0398fc")
-          .setFooter({ text: "©2022 | Reliable" })
+          .setColor("#2F3136")
+          .setFooter({ text: "©2022 - 2023 | Reliable" })
           .setTimestamp();
 
         interaction.reply({ embeds: [err_embed], ephemeral: true });
@@ -319,8 +321,8 @@ module.exports = {
         const unpaused = new EmbedBuilder()
           .setTitle("Success")
           .setDescription(`✅ | Giveaway unpaused!`)
-          .setColor("#0398fc")
-          .setFooter({ text: "©2022 | Reliable" })
+          .setColor("#2F3136")
+          .setFooter({ text: "©2022 - 2023 | Reliable" })
           .setTimestamp();
 
         interaction.reply({ embeds: [unpaused], ephemeral: true });
@@ -343,8 +345,8 @@ module.exports = {
           .setDescription(
             `❌ | Unable to find a giveaway for \`${getGiveaway}\``
           )
-          .setColor("#0398fc")
-          .setFooter({ text: "©2022 | Reliable" })
+          .setColor("#2F3136")
+          .setFooter({ text: "©2022 - 2023 | Reliable" })
           .setTimestamp();
 
         interaction.reply({ embeds: [err_embed], ephemeral: true });
@@ -354,8 +356,8 @@ module.exports = {
         const deleted = new EmbedBuilder()
           .setTitle("Success")
           .setDescription(`✅ | Deleted the Giveaway!`)
-          .setColor("#0398fc")
-          .setFooter({ text: "©2022 | Reliable" })
+          .setColor("#2F3136")
+          .setFooter({ text: "©2022 - 2023 | Reliable" })
           .setTimestamp();
 
         interaction.reply({ embeds: [deleted], ephemeral: true });
@@ -378,8 +380,8 @@ module.exports = {
           .setDescription(
             `❌ | **Unable to find a giveaway for \`${query}\`.**`
           )
-          .setColor("#0398fc")
-          .setFooter({ text: "©2022 | Reliable" })
+          .setColor("#2F3136")
+          .setFooter({ text: "©2022 - 2023 | Reliable" })
           .setTimestamp();
 
         interaction.reply({ embeds: [err_embed], ephemeral: true });
@@ -388,8 +390,8 @@ module.exports = {
       if (giveaway.ended) {
         const err_embed2 = new EmbedBuilder.setTitle("Error")
           .setDescription(`❌ | **This giveaway is already ended.**`)
-          .setColor("#0398fc")
-          .setFooter({ text: "©2022 | Reliable" })
+          .setColor("#2F3136")
+          .setFooter({ text: "©2022 - 2023 | Reliable" })
           .setTimestamp();
 
         interaction.reply({ embeds: [err_embed2], ephemeral: true });
@@ -399,8 +401,8 @@ module.exports = {
         const ended = new EmbedBuilder()
           .setTitle("Success")
           .setDescription(`**✅ | Giveaway ended!**`)
-          .setColor("#0398fc")
-          .setFooter({ text: "©2022 | Reliable" })
+          .setColor("#2F3136")
+          .setFooter({ text: "©2022 - 2023 | Reliable" })
           .setTimestamp();
 
         interaction.reply({ embeds: [ended], ephemeral: true }).catch((e) => {
@@ -416,6 +418,6 @@ module.exports = {
 
 /**
  * @Author Reliable Inc.
- * @Copyright ©2022 | Reliable Inc, All rights reserved.
+ * @Copyright ©2022 - 2023 | Reliable Inc, All rights reserved.
  * @CodedBy Mohtasim Alam Sohom, Sajidur Rahman Tahsin
  **/

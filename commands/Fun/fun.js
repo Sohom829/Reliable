@@ -4,14 +4,12 @@ const {
   ButtonBuilder,
   ButtonStyle,
   EmbedBuilder,
-  Embed,
-  Colors,
   ActionRowBuilder,
 } = require("discord.js");
 const fetch = require("node-fetch");
 const Canvacord = require("canvacord");
 const axios = require("axios");
-const ms = require("ms");
+const e = require("express");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -24,19 +22,35 @@ module.exports = {
       sub.setName("cat-fact").setDescription("Generate a random cat facts")
     )
     .addSubcommand((sub) =>
-      sub.setName("pickupline").setDescription("👉 Generate some pickuplines!")
+      sub.setName("advice").setDescription("Gives you random advices")
     )
     .addSubcommand((sub) =>
-      sub
-        .setName("lovemeter")
-        .setDescription("Displays love meter between two users.")
-        .addUserOption((op) =>
-          op.setName("user").setDescription("Mention the user").setRequired(true)
-        )
-        .addUserOption((op) =>
-          op.setName("user2").setDescription("Mention the user").setRequired(false)
-        )
+      sub.setName("quotes").setDescription("Sends random quotes")
     )
+    .addSubcommand((sub) =>
+    sub
+      .setName("roast")
+      .setDescription("Roast someone.")
+      .addUserOption((op) =>
+        op
+          .setName("user")
+          .setDescription("Mention the user you want to roast.")
+          .setRequired(true)
+      )
+  )    
+    .addSubcommand((sub) =>
+    sub
+      .setName("reverse")
+      .setDescription(
+        "◀ Sends the same message that you had sent but reversed."
+      )
+      .addStringOption((op) =>
+        op
+          .setName("text")
+          .setDescription("The text to reverse")
+          .setRequired(true)
+      )
+  )    
     .addSubcommand((sub) =>
       sub
         .setName("date-facts")
@@ -61,142 +75,17 @@ module.exports = {
     )
     .addSubcommand((sub) =>
       sub
-        .setName("reverse")
-        .setDescription("◀ Sends the same message that you had sent but reversed.")
-        .addStringOption((op) =>
-          op
-            .setName("text")
-            .setDescription("The text to reverse")
-            .setRequired(true)
-        )
-    )
-    .addSubcommand((sub) =>
-      sub
-      .setName("pp")
-      .setDescription("PP size")
-      .addUserOption((option) =>
-        option
-          .setName("user")
-          .setDescription("User to PP rate")
-          .setRequired(true)
-      )
-    )
-    .addSubcommand((sub) =>
-      sub
-        .setName("distract")
-        .setDescription("Distracted Dude")
-        .addUserOption((op) =>
-          op
-            .setName("target")
-            .setDescription("Select the target")
-            .setRequired(true)
-        )
-        .addUserOption((op) =>
-          op
-            .setName("target-2")
-            .setDescription("Select the second target")
-            .setRequired(true)
-        )
-    )
-    .addSubcommand((sub) =>
-      sub
-        .setName("eject")
-        .setDescription("☢ Eject some from spaceship.")
-        .addUserOption((op) =>
-          op
-            .setName("target")
-            .setDescription("Select the target")
-            .setRequired(true)
-        )
-        .addStringOption((op) =>
-          op
-            .setName("crewmate")
-            .setDescription("Type the color (hex not supported)")
-            .setRequired(true)
-        )
-    )
-    .addSubcommand((sub) =>
-      sub
-        .setName("emergency-meeting")
-        .setDescription("Emergency! Mayday!")
-        .addUserOption((op) =>
-          op
-            .setName("target")
-            .setDescription("Select the target")
-            .setRequired(true)
-        )
-    )
-    .addSubcommand((sub) =>
-      sub
-        .setName("age")
-        .setDescription("Predict the age of a name")
-        .addStringOption((op) =>
-          op
-            .setName("name")
-            .setDescription("Provide the name")
-            .setRequired(true)
-        )
-    )
-    .addSubcommand((sub) =>
-      sub.setName("advice").setDescription("Gives you random advices")
-    )
-    .addSubcommand((sub) =>
-      sub
-        .setName("first-time")
-        .setDescription("First time dude?")
-        .addUserOption((op) =>
-          op
-            .setName("target")
-            .setDescription("Select the target")
-            .setRequired(true)
-        )
-    )
-    .addSubcommand((sub) =>
-      sub
-        .setName("grave")
-        .setDescription("💀 Grave someone.")
-        .addUserOption((op) =>
-          op
-            .setName("target")
-            .setDescription("Select the target")
-            .setRequired(true)
-        )
-    )
-    .addSubcommand((sub) =>
-      sub
-        .setName("heaven")
-        .setDescription("Returns heaven.")
-        .addUserOption((op) =>
-          op
-            .setName("target")
-            .setDescription("Select the target")
-            .setRequired(true)
-        )
-    )
-    .addSubcommand((sub) =>
-      sub
-        .setName("jail")
-        .setDescription("Jail anyone!")
-        .addUserOption((op) =>
-          op
-            .setName("target")
-            .setDescription("Select the target")
+        .setName("pp")
+        .setDescription("PP size")
+        .addUserOption((option) =>
+          option
+            .setName("user")
+            .setDescription("User to PP rate")
             .setRequired(true)
         )
     )
     .addSubcommand((sub) =>
       sub.setName("joke").setDescription("Generate a random jokes")
-    )
-    .addSubcommand((sub) =>
-      sub
-        .setName("kill")
-        .setDescription("kill anybody but in discord")
-        .addUserOption((op) =>
-          op
-            .setName("target")
-            .setDescription("Select the target")
-            .setRequired(true)
-        )
     )
     .addSubcommand((sub) =>
       sub
@@ -211,29 +100,6 @@ module.exports = {
     )
     .addSubcommand((sub) =>
       sub.setName("meme").setDescription("Generate some memes")
-    )
-    .addSubcommand((sub) =>
-      sub.setName("nuke").setDescription("nuke a server (FAKE) !")
-    )
-    .addSubcommand((sub) =>
-      sub.setName("quotes").setDescription("Sends random quotes")
-    )
-    .addSubcommand((sub) =>
-      sub
-        .setName("slap")
-        .setDescription("Return A Slap Image!")
-        .addUserOption((op) =>
-          op
-            .setName("target")
-            .setDescription("Select the target")
-            .setRequired(true)
-        )
-        .addStringOption((op) =>
-          op
-            .setName("text")
-            .setDescription("What you are slapping him?")
-            .setRequired(true)
-        )
     )
     .addSubcommand((sub) =>
       sub
@@ -260,8 +126,8 @@ module.exports = {
               value: `> ${json.fact}`,
               inline: false,
             })
-            .setColor("#0398fc")
-            .setFooter({ text: "©2022 | Reliable" });
+            .setColor("#2F3136")
+            .setFooter({ text: "©2022 - 2023 | Reliable" });
 
           interaction.reply({ embeds: [embed] });
         });
@@ -276,8 +142,8 @@ module.exports = {
               value: `> ${json.fact}`,
               inline: false,
             })
-            .setColor("#0398fc")
-            .setFooter({ text: "©2022 | Reliable" })
+            .setColor("#2F3136")
+            .setFooter({ text: "©2022 - 2023 | Reliable" })
             .setImage(json.image);
 
           interaction.reply({ embeds: [embed] });
@@ -296,107 +162,21 @@ module.exports = {
           value: `> ${text}`,
           inline: false,
         })
-        .setColor("#0398fc")
-        .setFooter({ text: "©2022 | Reliable" });
+        .setColor("#2F3136")
+        .setFooter({ text: "©2022 - 2023 | Reliable" });
 
       interaction.reply({ embeds: [embed] });
-    } else if (interaction.options.getSubcommand() === "distract") {
-      const reliable =
-        "https://cdn.discordapp.com/avatars/1030870443005071512/afdcde77520cb0d05ced9e77cfd415b7.webp?size=1024";
-      const user =
-        interaction.options.getUser("target") ||
-        "Well, you know what you are doing..";
-      const user2 =
-        interaction.options.getUser("target-2") ||
-        "Well, you know what you are doing..";
-      const Embed = new EmbedBuilder()
-        .setTitle("Dude watch out")
-        .setColor("#0398fc")
-        .setImage(
-          `https://vacefron.nl/api/distractedbf?&boyfriend=${interaction.user.displayAvatarURL(
-            { format: "png" }
-          )}&woman=${user2.displayAvatarURL()}&girlfriend=${user.displayAvatarURL(
-            { format: "png" }
-          )}`
-        )
-        .setFooter({ text: "©2022 | Reliable" })
-        .setTimestamp();
-      interaction.reply({ embeds: [Embed] });
-    } else if (interaction.options.getSubcommand() === "eject") {
-      const user = interaction.options.getUser("target") || interaction.user;
-      const color = interaction.options.getString("crewmate") || "";
-
-      const Embed = new EmbedBuilder()
-        .setTitle("Ejected")
-        .setColor("#0398fc")
-        .setImage(
-          `https://vacefron.nl/api/ejected?&name=${user.username}&imposter=YES&crewmate=${color}`
-        )
-        .setFooter({ text: "©2022 | Reliable" })
-        .setTimestamp();
-      interaction.reply({ embeds: [Embed] });
-    } else if (interaction.options.getSubcommand() === "emergency-meeting") {
-      const txt = interaction.options.getString("reason") || "";
-
-      const Embed = new EmbedBuilder()
-        .setTitle("Emergency Meeting")
-        .setColor("#0398fc")
-        .setImage(`https://vacefron.nl/api/emergencymeeting?&text=${txt}`)
-        .setFooter({ text: "©2022 | Reliable" })
-        .setTimestamp();
-      interaction.reply({ embeds: [Embed] });
-    } else if (interaction.options.getSubcommand() === "first-time") {
-      const user = interaction.options.getUser("target") || "";
-
-      const Embed = new EmbedBuilder()
-        .setTitle("First Time...")
-        .setColor("#0398fc")
-        .setImage(
-          `https://vacefron.nl/api/firsttime?&user=${user.displayAvatarURL({
-            format: "png",
-          })}`
-        )
-        .setFooter({ text: "©2022 | Reliable" })
-        .setTimestamp();
-      interaction.reply({ embeds: [Embed] });
-    } else if (interaction.options.getSubcommand() === "grave") {
-      const user = interaction.options.getUser("target") || "";
-
-      const Embed = new EmbedBuilder()
-        .setTitle("Rest in peace.")
-        .setColor("#0398fc")
-        .setImage(
-          `https://vacefron.nl/api/grave?&user=${user.displayAvatarURL({
-            format: "png",
-          })}`
-        )
-        .setFooter({ text: "©2022 | Reliable" })
-        .setTimestamp();
-      interaction.reply({ embeds: [Embed] });
-    } else if (interaction.options.getSubcommand() === "heaven") {
-      const user = interaction.options.getUser("target") || "";
-
-      const Embed = new EmbedBuilder()
-        .setTitle("I love heaven!")
-        .setColor("#0398fc")
-        .setImage(
-          `https://vacefron.nl/api/heaven?&user=${user.displayAvatarURL({
-            format: "png",
-          })}`
-        )
-        .setFooter({ text: "©2022 | Reliable" })
-        .setTimestamp();
-      interaction.reply({ embeds: [Embed] });
-    } else if (interaction.options.getSubcommand() === "jail") {
-      const user =
-        interaction.options.getMember("target") || interaction.member;
-      let avatar = user.displayAvatarURL({ dynamic: true, format: "png" });
-      let image = await Canvacord.Canvas.jail(avatar);
-      let attachment = new AttachmentBuilder(image, { name: "jail.png" });
-
-      interaction.reply({
-        files: [attachment],
-      });
+    } else if (interaction.options.getSubcommand() === "quotes") {
+      fetch("https://api.popcat.xyz/quote")
+        .then((res) => res.json())
+        .then((json) => {
+          const Embed = new EmbedBuilder()
+            .setTitle(`Quotes`)
+            .setColor("#2F3136")
+            .setDescription(`>>> **${json.quote}**`)
+            .setFooter({ text: "©2022 - 2023 | Reliable" });
+          interaction.reply({ embeds: [Embed] });
+        });
     } else if (interaction.options.getSubcommand() === "joke") {
       fetch("https://some-random-api.ml/joke")
         .then((res) => res.json())
@@ -404,25 +184,11 @@ module.exports = {
           const embed = new EmbedBuilder()
             .setTitle("Joke")
             .setDescription(`${json.joke}`)
-            .setColor("#0398fc")
-            .setFooter({ text: "©2022 | Reliable" });
+            .setColor("#2F3136")
+            .setFooter({ text: "©2022 - 2023 | Reliable" });
 
           interaction.reply({ embeds: [embed] });
         });
-    } else if (interaction.options.getSubcommand() === "kill") {
-      let killed =
-        interaction.options.getMember("target") || interaction.member;
-
-      const kill = new EmbedBuilder()
-        .setTitle("Omg, You killed someone!")
-        .setColor("#0398fc")
-        .setFooter({ text: "©2022 | Reliable" })
-        .setImage(
-          "https://cdn.discordapp.com/attachments/1029807885116506122/1033328186437664818/tenor.gif"
-        )
-        .setDescription(`You killed ${killed}`);
-
-      await interaction.reply({ embeds: [kill] });
     } else if (interaction.options.getSubcommand() === "lyrics") {
       const lyricsfinder = interaction.options.getString("song") || "";
 
@@ -432,14 +198,14 @@ module.exports = {
         .then((res) => res.json())
         .then((json) => {
           const embed = new EmbedBuilder()
-            .setTitle(`${json.title}`)
+            .setTitle(`${json.title || "N/A"}`)
             .addFields({
               name: "<:reliable_discordparthner:1030801628741247066> Authors",
-              value: `> **\`${json.author}\`**`,
+              value: `> **\`${json.author || "N/A"}\`**`,
             })
-            .setDescription(`>>> ${json.lyrics}`)
-            .setColor("#0398fc")
-            .setFooter({ text: "©2022 | Reliable" });
+            .setDescription(`>>> ${json.lyrics || "**`N/A`**"}`)
+            .setColor("#2F3136")
+            .setFooter({ text: "©2022 - 2023 | Reliable" });
 
           interaction.reply({ embeds: [embed] });
         });
@@ -454,7 +220,7 @@ module.exports = {
         if (data.over_18 === false) nonNSFW = data;
       }
       const embed = new EmbedBuilder()
-        .setColor("#0398fc")
+        .setColor("#2F3136")
         .setTitle(`${nonNSFW.title}`)
         .addFields(
           {
@@ -468,7 +234,7 @@ module.exports = {
             inline: false,
           }
         )
-        .setFooter({ text: "©2022 | Reliable" })
+        .setFooter({ text: "©2022 - 2023 | Reliable" })
         .setImage(nonNSFW.url);
 
       const link2 = new ActionRowBuilder().addComponents(
@@ -479,49 +245,6 @@ module.exports = {
       );
 
       await interaction.reply({ embeds: [embed], components: [link2] });
-    } else if (interaction.options.getSubcommand() === "nuke") {
-      const nuke = new EmbedBuilder()
-        .setTitle("Nuked the server uhhh")
-        .setColor("#0398fc")
-        .setFooter({ text: "©2022 | Reliable" })
-        .setImage(
-          "https://cdn.discordapp.com/attachments/1029807885116506122/1033330807026233465/explosion-boom.gif"
-        );
-
-      await interaction.reply({ embeds: [nuke] });
-    } else if (interaction.options.getSubcommand() === "qoutes") {
-      fetch(`http://quotes.stormconsultancy.co.uk/random.json`)
-        .then((res) => res.json())
-        .then((json) => {
-          const embed = new EmbedBuilder()
-            .addFields({
-              name: "Quote",
-              value: `> *"${json.quote}"* - **${json.author}**`,
-              inline: false,
-            })
-            .setColor("#0398fc")
-            .setFooter({ text: "©2022 | Reliable" });
-
-          interaction.reply({ embeds: [embed] });
-        });
-    } else if (interaction.options.getSubcommand() === "slap") {
-      const user =
-        interaction.options.getUser("target") ||
-        "You cannot slap yourself unless your a stupid boi :)";
-
-      const reason = interaction.options.getString("text") || "Don't Be Gay";
-
-      const Embed = new EmbedBuilder()
-        .setTitle("Dudes slapping each other.")
-        .setColor("#0398fc")
-        .setImage(
-          `https://vacefron.nl/api/batmanslap?text1=Why+Man?&text2=${reason}&batman=${interaction.user.displayAvatarURL(
-            { format: "png" }
-          )}&robin=${user.displayAvatarURL({ format: "png" })}`
-        )
-        .setFooter({ text: "©2022 | Reliable" })
-        .setTimestamp();
-      interaction.reply({ embeds: [Embed] });
     } else if (interaction.options.getSubcommand() === "year-facts") {
       let years = interaction.options.getString("year") || "";
 
@@ -535,21 +258,10 @@ module.exports = {
           value: `> ${text}`,
           inline: false,
         })
-        .setColor("#0398fc")
-        .setFooter({ text: "©2022 | Reliable" });
+        .setColor("#2F3136")
+        .setFooter({ text: "©2022 - 2023 | Reliable" });
 
       interaction.reply({ embeds: [embed] });
-    } else if (interaction.options.getSubcommand() === "first-time") {
-      const user = interaction.options.getUser("target") || "";
-
-      const Embed = new EmbedBuilder()
-        .setTitle("First Time...")
-        .setColor("#0398fc")
-        .setImage(
-          `https://vacefron.nl/api/firsttime?&user=${user.displayAvatarURL({
-            format: "png",
-          })}`
-        );
     } else if (interaction.options.getSubcommand() === "advice") {
       fetch(`https://api.adviceslip.com/advice`)
         .then((res) => res.json())
@@ -557,27 +269,8 @@ module.exports = {
           const Embed = new EmbedBuilder()
             .setTitle("Advice")
             .setDescription(`> **${json.slip.advice}**`)
-            .setColor("#0398fc")
-            .setFooter({ text: "©2022 | Reliable" })
-            .setTimestamp();
-          interaction.reply({ embeds: [Embed] });
-        });
-    } else if (interaction.options.getSubcommand() === "age") {
-      const name = interaction.options.getString("name") || "";
-
-      fetch(`https://api.agify.io/?name=${name}`)
-        .then((res) => res.json())
-        .then((json) => {
-          const Embed = new EmbedBuilder()
-            .setTitle("Age Guess")
-            .addFields({
-              name: "Age Guessing",
-              value: `**\`•\` Name**: ${name || "**`Nothing Found`**"}
-**\`•\` Age**: ${json.age || "**`Nothing Found`**"}
-**\`•\` Count**: ${json.count || "**`Nothing Found`**"}`,
-            })
-            .setColor("#0398fc")
-            .setFooter({ text: "©2022 | Reliable" })
+            .setColor("#2F3136")
+            .setFooter({ text: "©2022 - 2023 | Reliable" })
             .setTimestamp();
           interaction.reply({ embeds: [Embed] });
         });
@@ -605,92 +298,203 @@ module.exports = {
 
         const Embed = new EmbedBuilder()
           .setTimestamp()
-          .setColor("#0398fc")
-          .setFooter({ text: "©2022 | Reliable" })
+          .setColor("#2F3136")
+          .setFooter({ text: "©2022 - 2023 | Reliable" })
           .setTitle(`${inquiry}`)
           .setDescription(`**🎱 | \`${fortune}\`**`);
 
         interaction.reply({ embeds: [Embed] });
       } catch (err) {
-        console.log(err);
-
         const err_embed = new EmbedBuilder()
           .setTitle("Error")
           .setDescription(
-            "**❌ | The magical 8ball is having some issues please try again later!**"
+            "**<:reliable_wrong:1043155193077960764> | The magical 8ball is having some issues please try again later!**"
           )
           .setTimestamp()
-          .setColor("#0398fc")
-          .setFooter({ text: "©2022 | Reliable" });
+          .setColor("#2F3136")
+          .setFooter({ text: "©2022 - 2023 | Reliable" });
 
         interaction.reply({ embeds: [err_embed], ephemeral: true });
       }
     } else if (interaction.options.getSubcommand() === "pp") {
-      const member = interaction.options.getMember("user")
+      const member = interaction.options.getMember("user");
 
       try {
-        const size = Math.floor(Math.random() * 21)
-      
-        let PP = "8"
-      
+        const size = Math.floor(Math.random() * 21);
+
+        let PP = "8";
+
         for (let i = 0; i < size; i++) {
-          PP += "="
+          PP += "=";
         }
-      
-        PP += "D"
+
+        PP += "D";
 
         const Embed = new EmbedBuilder()
           .setTimestamp()
-          .setColor("#0398fc")
-          .setFooter({ text: "©2022 | Reliable" })
+          .setColor("#2F3136")
+          .setFooter({ text: "©2022 - 2023 | Reliable" })
           .setTitle(`${member.displayName}'s PP`)
           .setDescription(`\`\`\`${PP}\`\`\``);
 
         interaction.reply({ embeds: [Embed] });
       } catch (err) {
-        console.log(err);
-
         const err_embed = new EmbedBuilder()
           .setTitle("Error")
           .setDescription(
-            "**❌ | The pp is having some issues please try again later.**"
+            "**<:reliable_wrong:1043155193077960764> | The pp is having some issues please try again later.**"
           )
           .setTimestamp()
-          .setColor("#0398fc")
-          .setFooter({ text: "©2022 | Reliable" });
+          .setColor("#2F3136")
+          .setFooter({ text: "©2022 - 2023 | Reliable" });
 
         interaction.reply({ embeds: [err_embed], ephemeral: true });
       }
     } else if (interaction.options.getSubcommand() === "reverse") {
-
       try {
-        const text = interaction.options.getString("text")
+        const text = interaction.options.getString("text");
         const converted = text.split("").reverse().join("");
 
         const Embed = new EmbedBuilder()
           .setTimestamp()
-          .setColor("#0398fc")
-          .setFooter({ text: "©2022 | Reliable" })
+          .setColor("#2F3136")
+          .setFooter({ text: "©2022 - 2023 | Reliable" })
           .setTitle(`◀ | Reversed`)
           .setDescription(`\`\`\`${converted}\`\`\``);
 
         interaction.reply({ embeds: [Embed] });
       } catch (err) {
         console.log(err);
-
         const err_embed = new EmbedBuilder()
           .setTitle("Error")
           .setDescription(
-            "**❌ | Reverse Machine crashed! Trying to fix it.**"
+            "**<:reliable_wrong:1043155193077960764> | Reverse Machine crashed! Trying to fix it.**"
           )
           .setTimestamp()
-          .setColor("#0398fc")
-          .setFooter({ text: "©2022 | Reliable" });
+          .setColor("#2F3136")
+          .setFooter({ text: "©2022 - 2023 | Reliable" });
+
+        interaction.reply({ embeds: [err_embed], ephemeral: true });
+      }
+    } else if (interaction.options.getSubcommand() === "roast") {
+      try {
+        const user = interaction.options.getUser("user")
+        if (interaction.user.id === user.id) {
+          const err_embed = new EmbedBuilder()
+            .setTitle("Error")
+            .setDescription(
+              "**<:reliable_wrong:1043155193077960764> |  Dude, seriously? You want to roast yourself?**"
+            )
+            .setTimestamp()
+            .setColor("#2F3136")
+            .setFooter({ text: "©2022 - 2023 | Reliable" });
+
+          interaction.reply({ embeds: [err_embed], ephemeral: true });
+        }
+        var roasts = [
+          "*Puts you in the oven.*",
+          "You're so stupid.",
+          "Sorry, I can't hear you over how annoying you are.",
+          "I've got better things to do.",
+          "You're as dumb as Cleverbot.",
+          "Your IQ is lower than the Mariana Trench.",
+          "You're so annoying even the flies stay away from your stench.",
+          "Go away, please.",
+          "I'd give you a nasty look but you've already got one.",
+          "It looks like your face caught fire and someone tried to put it out with a hammer.",
+          "Your family tree must be a cactus because everyone on it is a prick.",
+          "Someday you will go far, and I hope you stay there.",
+          "The zoo called. They're wondering how you got out of your cage.",
+          "I was hoping for a battle of wits, but you appear to be unarmed.",
+          "You are proof that evolution can go in reverse.",
+          "Brains aren't everything, in your case, they're nothing.",
+          "Sorry I didn't get that, I don't speak idiot.",
+          "Why is it acceptable for you to be an idiot, but not for me to point it out?",
+          "We all sprang from apes, but you did not spring far enough.",
+          "Even monkeys can go to space, so clearly you lack some potential.",
+          "It's brains over brawn, yet you have neither.",
+          "You look like a monkey, and you smell like one too.",
+          "Even among idiots you're lacking.",
+          "You fail even when you're doing absolutely nothing.",
+          "If there was a vote for 'least likely to succeed' you'd win first prize.",
+          "I'm surrounded by idiots... Or, wait, that's just you.",
+          "I wanna go home. Well, really I just want to get away from the awful aroma you've got going there.",
+          "Every time you touch me I have to go home and wash all my clothes nine times just to get a normal smell back.",
+          "If I had a dollar for every brain you don't have, I'd have one dollar.",
+          "I'd help you succeed but you're incapable.",
+          "Your hairline is built like a graph chart, positive and negative forces attract but the clippers and your hair repel.",
+          "I know a good joke! You!",
+          "You have two parts of your brain, 'left' and 'right'. In the left side, there's nothing right. In the right side, there's nothing left.",
+          "Is your ass jealous of the amount of shit that just came out of your mouth?",
+          "I don't engage in mental combat with the unarmed.",
+          "Two wrongs don't make a right, take your parents as an example.",
+          "Your birth certificate is an apology letter from the condom factory.",
+          "You sound reasonable. It must be time to up my medication!",
+          "You must have been born on a highway because that's where most accidents happen.",
+          "You're so ugly, when your mom dropped you off at school she got a fine for littering.",
+          "If laughter is the best medicine, your face must be curing the world.",
+          "I'd like to see things from your point of view but I can't seem to get my head that far up my ass.",
+          "The only way you'll ever get laid is if you crawl up a chicken's ass and wait.",
+          "I'm jealous of all the people that haven't met you!",
+          "If I had a face like yours, I'd sue my parents.",
+          "There's only one problem with your face. I can see it.",
+          "Don't you love nature, despite what it did to you?",
+          "What language are you speaking? Cause it sounds like bullshit.",
+          "Stupidity is not a crime so you are free to go.",
+          "You are what happens when women drink during pregnancy.",
+          "When I look at you, I wish I could meet you again for the first time… and walk past.",
+          "You are the sun in my life… now get 93 million miles away from me.",
+          "You have such a beautiful face… But let’s put a bag over that personality.",
+          "There is someone out there for everyone. For you, it’s a therapi",
+          "So, a thought crossed your mind? Must have been a long and lonely journey.",
+          "You have a room temperature IQ - if the room is in Antarctica.",
+          "If you really want to know about mistakes, you should ask your parents.",
+          "I would ask you how old you are but I know you can't count that high.",
+          "Do you want to know how I get all these insults? I use something called intelligence.",
+          "I was going to give you a nasty look, but you already have one.",
+          "I don't know what your problem is, but I'll bet it's hard to pronounce.",
+          "Brains aren't everything. In your case they're nothing.",
+          "As an outsider, what do you think of the human race?",
+          "You look like a before picture.",
+          "Oh, what? Sorry. I was trying to imagine you with a personality.",
+          "You're the reason the gene pool needs a lifeguard.",
+          "We can always tell when you are lying. Your lips move.",
+          "I may love to shop but I'm not buying your bullshit.",
+          "Hell is wallpapered with all your deleted selfies.",
+          "You are living proof that manure can sprout legs and walk.",
+          "You do realize makeup isn't going to fix your stupidity?",
+          "Calling you an idiot would be an insult to all stupid people.",
+          "You have the perfect face for radio.",
+          "Aww, it's so cute when you try to talk about things you don't understand.",
+          "If I wanted to hear from an asshole, I'd fart.",
+          "What's the difference between you and an egg? Eggs get laid!",
+          "You look like a rock smashed into a pile of sand, rolled into a blunt, and got smoked through an asthma inhaler.",
+          "Your advice is about as useful as a paper-mache bomb shelter.",
+          "Is it sad that your theme song might as well have a 0/0 signature?",
+          "You're so fat, you make the galaxy look like it's on the molecular scale.",
+      ];
+        const Embed = new EmbedBuilder()
+          .setTimestamp()
+          .setColor("#2F3136")
+          .setFooter({ text: "©2022 - 2023 | Reliable" })
+          .setTitle(`😓 | Roasted`)
+          .setDescription(`> **<@${user.id}>** \`${roasts[Math.floor(Math.random() * roasts.length)]}\``);
+
+        interaction.reply({ embeds: [Embed] });
+      } catch (err) {
+        console.log(err);
+        const err_embed = new EmbedBuilder()
+          .setTitle("Error")
+          .setDescription(
+            "**<:reliable_wrong:1043155193077960764> | Something went wrong.**"
+          )
+          .setTimestamp()
+          .setColor("#2F3136")
+          .setFooter({ text: "©2022 - 2023 | Reliable" });
 
         interaction.reply({ embeds: [err_embed], ephemeral: true });
       }
     } else if (interaction.options.getSubcommand() === "pickupline") {
-
       try {
         const line = [
           "Do you like raisins? How do you feel about a date?",
@@ -740,77 +544,76 @@ module.exports = {
 
         const Embed = new EmbedBuilder()
           .setTimestamp()
-          .setColor("#0398fc")
-          .setFooter({ text: "©2022 | Reliable" })
+          .setColor("#2F3136")
+          .setFooter({ text: "©2022 - 2023 | Reliable" })
           .setTitle(`Pickup Line`)
-          .setDescription(`\`\`\`${line[Math.round(Math.random() * (line.length - 1))]}\`\`\``);
+          .setDescription(
+            `\`\`\`${line[Math.round(Math.random() * (line.length - 1))]}\`\`\``
+          );
 
         interaction.reply({ embeds: [Embed] });
       } catch (err) {
         console.log(err);
-
         const err_embed = new EmbedBuilder()
           .setTitle("Error")
           .setDescription(
-            "**❌ | Pickup Machine crashed! Trying to fix it.**"
+            "**<:reliable_wrong:1043155193077960764> | Pickup Machine crashed! Trying to fix it.**"
           )
           .setTimestamp()
-          .setColor("#0398fc")
-          .setFooter({ text: "©2022 | Reliable" });
+          .setColor("#2F3136")
+          .setFooter({ text: "©2022 - 2023 | Reliable" });
 
         interaction.reply({ embeds: [err_embed], ephemeral: true });
       }
     } else if (interaction.options.getSubcommand() === "lovemeter") {
-
       try {
-        const user = interaction.options.getMember('user');
-        const user2 = interaction.options.getMember('user2') || interaction.member;
+        const user = interaction.options.getMember("user");
+        const user2 =
+          interaction.options.getMember("user2") || interaction.member;
         if (user.id === user2.id) {
           const err_embed = new EmbedBuilder()
-          .setTitle("Error")
-          .setDescription(
-            "**❌ | I can only calculate love percentage between two different people.**"
-          )
-          .setTimestamp()
-          .setColor("#0398fc")
-          .setFooter({ text: "©2022 | Reliable" });
+            .setTitle("Error")
+            .setDescription(
+              "**<:reliable_wrong:1043155193077960764> |  I can only calculate love percentage between two different people.**"
+            )
+            .setTimestamp()
+            .setColor("#2F3136")
+            .setFooter({ text: "©2022 - 2023 | Reliable" });
 
-          interaction.reply({ embeds: [err_embed], ephemeral: true })
+          interaction.reply({ embeds: [err_embed], ephemeral: true });
         }
 
         const love = Math.random() * 100;
         const loveIndex = Math.floor(love / 10);
-        const loveLevel = '❤️'.repeat(loveIndex) + '♡'.repeat(10 - loveIndex);
+        const loveLevel = "❤️".repeat(loveIndex) + "♡".repeat(10 - loveIndex);
 
         const Embed = new EmbedBuilder()
           .setTimestamp()
-          .setColor("#0398fc")
-          .setFooter({ text: "©2022 | Reliable" })
+          .setColor("#2F3136")
+          .setFooter({ text: "©2022 - 2023 | Reliable" })
           .setTitle(`❤️ | Love`)
           .addFields(
             {
               name: "**`•`** Lovers",
               value: `**\`${user.displayName}\`** and **\`${user2.displayName}\`**`,
-              inline: true
+              inline: true,
             },
             {
               name: "**`•`** Love Meter",
               value: `**\`${Math.floor(love)}%\`: \`${loveLevel}\`**`,
-              inline: true
-            },
-          )
+              inline: true,
+            }
+          );
         interaction.reply({ embeds: [Embed] });
       } catch (err) {
-        console.log(err)
-
         const err_embed = new EmbedBuilder()
           .setTitle("Error")
           .setDescription(
-            "**❌ | Love Machine crashed! Trying to fix it.**"
+            "**<:reliable_wrong:1043155193077960764> | Love Machine crashed! Trying to fix it.**"
           )
           .setTimestamp()
-          .setColor("#0398fc")
-          .setFooter({ text: "©2022 | Reliable" });
+          .setColor("#2F3136")
+          .setFooter({ text: "©2022 - 2023 | Reliable" });
 
         interaction.reply({ embeds: [err_embed], ephemeral: true });
       }
@@ -821,6 +624,6 @@ module.exports = {
 };
 /**
  * @Author Reliable Inc.
- * @Copyright ©2022 | Reliable Inc, All rights reserved.
+ * @Copyright ©2022 - 2023 | Reliable Inc, All rights reserved.
  * @CodedBy Mohtasim Alam Sohom, Sajidur Rahman Tahsin
  */
